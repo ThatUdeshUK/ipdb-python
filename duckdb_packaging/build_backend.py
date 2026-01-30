@@ -73,7 +73,7 @@ def _in_sdist() -> bool:
 def _duckdb_submodule_path() -> Path:
     """Verify that the duckdb submodule is checked out and usable and return its path."""
     if not _in_git_repository():
-        msg = "Not in a git repository, no duckdb submodule present"
+        msg = "Not in a git repository, no iPDB submodule present"
         raise RuntimeError(msg)
     # search the duckdb submodule
     gitmodules_path = Path(".gitmodules")
@@ -95,24 +95,25 @@ def _duckdb_submodule_path() -> Path:
         if cur_module_reponame is not None and cur_module_path is not None:
             modules[cur_module_reponame] = cur_module_path
 
-    if "duckdb" not in modules:
-        msg = "DuckDB submodule missing"
+    print(modules)
+    if "iPDb" not in modules:
+        msg = "iPDB submodule missing"
         raise RuntimeError(msg)
 
-    duckdb_path = modules["duckdb"]
+    duckdb_path = modules["iPDb"]
     # now check that the submodule is usable
     proc = subprocess.Popen(["git", "submodule", "status", duckdb_path], stdout=subprocess.PIPE)
     status, _ = proc.communicate()
     status = status.decode("ascii", "replace")
     for line in status.splitlines():
         if line.startswith("-"):
-            msg = f"Duckdb submodule not initialized: {line}"
+            msg = f"iPDB submodule not initialized: {line}"
             raise RuntimeError(msg)
         if line.startswith("U"):
-            msg = f"Duckdb submodule has merge conflicts: {line}"
+            msg = f"iPDB submodule has merge conflicts: {line}"
             raise RuntimeError(msg)
         if line.startswith("+"):
-            _log(f"WARNING: Duckdb submodule not clean: {line}")
+            _log(f"WARNING: iPDB submodule not clean: {line}")
     # all good
     return Path(duckdb_path)
 
@@ -233,6 +234,7 @@ def build_wheel(
     # First figure out the duckdb version we should use
     duckdb_version = None
     if not _in_git_repository():
+        print("in git repository")
         if not _in_sdist():
             msg = "Not in a git repository nor in an sdist, can't build a wheel"
             raise RuntimeError(msg)
@@ -243,12 +245,15 @@ def build_wheel(
         duckdb_version = pep440_to_git_tag(strip_post_from_version(_FORCED_PEP440_VERSION))
 
     # We add the found version to the OVERRIDE_GIT_DESCRIBE cmake var
+    print(duckdb_version)
+    print(config_settings)
     if duckdb_version is not None:
         _skbuild_config_add(_SKBUILD_CMAKE_OVERRIDE_GIT_DESCRIBE, duckdb_version, config_settings)
         _log(f"{_SKBUILD_CMAKE_OVERRIDE_GIT_DESCRIBE} set to {duckdb_version}")
     else:
         _log("No explicit DuckDB submodule version provided. Letting CMake figure it out.")
 
+    print(wheel_directory, config_settings, metadata_directory)
     return skbuild_build_wheel(wheel_directory, config_settings=config_settings, metadata_directory=metadata_directory)
 
 

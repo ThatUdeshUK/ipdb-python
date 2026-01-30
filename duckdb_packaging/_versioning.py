@@ -159,10 +159,10 @@ def get_git_describe(
     """
     cwd = repo_path if repo_path is not None else None
     pattern = "v*.*.*"
-    if since_major:
-        pattern = "v*.0.0"
-    elif since_minor:
-        pattern = "v*.*.0"
+    # if since_major:
+    #     pattern = "v*.0.0"
+    # elif since_minor:
+    #     pattern = "v*.*.0"
     try:
         result = subprocess.run(
             ["git", "describe", "--tags", "--long", "--match", pattern],
