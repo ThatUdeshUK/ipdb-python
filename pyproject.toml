@@ -458,10 +458,10 @@ manylinux-aarch64-image = "manylinux_2_28"
 manylinux-pypy_aarch64-image = "manylinux_2_28"
 
 [tool.cibuildwheel.linux]
-before-build = ["yum install -y ccache"]
+before-build = ["yum install -y ccache openssl-devel curl-devel"]
 
 [tool.cibuildwheel.macos]
-before-build = ["brew install ccache"]
+before-build = ["brew install ccache curl openssl"]
 
 [tool.cibuildwheel.windows]
-before-build = ["choco install ccache"]
+before-build = ["choco install ccache openssl curl"]
