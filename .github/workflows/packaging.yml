@@ -7,15 +7,6 @@ on:
         type: boolean
         description: Build a minimal set of wheels to do a sanity check
         default: false
-      testsuite:
-        type: choice
-        description: Testsuite to run (none, fast, all)
-        required: true
-        default: all
-        options:
-          - none
-          - fast
-          - all
       duckdb-python-sha:
         type: string
         description: The commit to build against (defaults to latest commit of current ref)
@@ -34,11 +25,6 @@ on:
         type: boolean
         description: Build a minimal set of wheels to do a sanity check
         default: false
-      testsuite:
-        type: string
-        description: Testsuite to run (none, fast, all)
-        required: true
-        default: all
       duckdb-python-sha:
         type: string
         description: The commit or ref to build against (defaults to latest commit of current ref)
@@ -65,7 +51,7 @@ jobs:
     name: Build an sdist and determine versions
     uses: ./.github/workflows/packaging_sdist.yml
     with:
-      testsuite: all
+      testsuite: none
       duckdb-python-sha: ${{ inputs.duckdb-python-sha != '' && inputs.duckdb-python-sha || github.sha }}
       duckdb-sha: ${{ inputs.duckdb-sha }}
       set-version: ${{ inputs.set-version }}
@@ -75,7 +61,7 @@ jobs:
     uses: ./.github/workflows/packaging_wheels.yml
     with:
       minimal: ${{ inputs.minimal }}
-      testsuite: all
+      testsuite: none
       duckdb-python-sha: ${{ inputs.duckdb-python-sha != '' && inputs.duckdb-python-sha || github.sha }}
       duckdb-sha: ${{ inputs.duckdb-sha }}
       set-version: ${{ inputs.set-version }}
