@@ -43,6 +43,11 @@ jobs:
           fetch-depth: 0
           submodules: true
 
+      - name: Ensure curl and libcurl dev are installed
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y curl libcurl4-openssl-dev libssh-dev
+
       - name: Checkout DuckDB
         shell: bash
         if: ${{ inputs.duckdb-sha }}
